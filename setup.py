@@ -30,7 +30,7 @@ except IOError:
 
 setuptools.setup(
     name='yara-procdump-python',
-    version='0.1',
+    version='0.1.0.post1',
     description=description,
     long_description=long_description,
     license='Apache 2.0',
