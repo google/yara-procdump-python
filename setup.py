@@ -22,11 +22,17 @@ _yara_procdump = setuptools.Extension('yara_procdump',
 
 description = 'A Python extension to wrap the Yara process memory access API.'
 
+try:
+  long_description = open('README.md').read()
+except IOError:
+  long_description = description
+
+
 setuptools.setup(
     name='yara-procdump-python',
     version='0.1',
     description=description,
-    long_description=open('README.md').read(),
+    long_description=long_description,
     license='Apache 2.0',
     author='Andreas Moser',
     author_email='amoser@google.com',
