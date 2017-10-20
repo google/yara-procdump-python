@@ -20,8 +20,8 @@ import setuptools
 
 _yara_procdump = setuptools.Extension('yara_procdump',
                                       sources=['yara_procdump_python.c'],
-                                      include_dirs=['yara/libyara/include'],
-                                      libraries=['yara'])
+                                      include_dirs=['yara/libyara',
+                                                    'yara/libyara/include'])
 
 OPTIONS = [
     ('dynamic-linking', None, 'link dynamically against libyara'),
@@ -69,11 +69,36 @@ class BuildExtCommand(build_ext.build_ext):
 
     module = self.distribution.ext_modules[0]
 
+    building_for_windows = self.plat_name in ['win32', 'win-amd64']
+    if building_for_windows:
+      module.define_macros.append(('_CRT_SECURE_NO_WARNINGS', '1'))
+      module.libraries.append('advapi32')
+
     if self.dynamic_linking:
       module.libraries.append('yara')
     else:
-      module.sources.append('yara/libyara/proc.c')
+      module.sources.append('yara/libyara/arena.c')
+      module.sources.append('yara/libyara/hash.c')
+      module.sources.append('yara/libyara/hex_grammar.c')
+      module.sources.append('yara/libyara/hex_lexer.c')
+      module.sources.append('yara/libyara/libyara.c')
       module.sources.append('yara/libyara/mem.c')
+      module.sources.append('yara/libyara/modules.c')
+      module.sources.append('yara/libyara/object.c')
+      module.sources.append('yara/libyara/proc.c')
+      module.sources.append('yara/libyara/re.c')
+      module.sources.append('yara/libyara/re_grammar.c')
+      module.sources.append('yara/libyara/re_lexer.c')
+      module.sources.append('yara/libyara/sizedstr.c')
+      module.sources.append('yara/libyara/stream.c')
+      module.sources.append('yara/libyara/strutils.c')
+      module.sources.append('yara/libyara/threading.c')
+      module.sources.append('yara/libyara/modules/elf.c')
+      module.sources.append('yara/libyara/modules/math.c')
+      module.sources.append('yara/libyara/modules/pe.c')
+      module.sources.append('yara/libyara/modules/pe_utils.c')
+      module.sources.append('yara/libyara/modules/time.c')
+      module.sources.append('yara/libyara/modules/tests.c')
 
     build_ext.build_ext.run(self)
 
