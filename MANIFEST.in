@@ -1,0 +1,38 @@
+include yara/libyara/arena.c
+include yara/libyara/hash.c
+include yara/libyara/hex_grammar.c
+include yara/libyara/hex_lexer.c
+include yara/libyara/libyara.c
+include yara/libyara/mem.c
+include yara/libyara/modules.c
+include yara/libyara/object.c
+include yara/libyara/proc.c
+include yara/libyara/re.c
+include yara/libyara/re_grammar.c
+include yara/libyara/re_lexer.c
+include yara/libyara/sizedstr.c
+include yara/libyara/stream.c
+include yara/libyara/strutils.c
+include yara/libyara/threading.c
+include yara/libyara/modules/elf.c
+include yara/libyara/modules/math.c
+include yara/libyara/modules/pe.c
+include yara/libyara/modules/pe_utils.c
+include yara/libyara/modules/time.c
+include yara/libyara/modules/tests.c
+
+include yara/libyara/hex_grammar.h
+include yara/libyara/include/yara/elf.h
+include yara/libyara/include/yara/endian.h
+include yara/libyara/include/yara/globals.h
+include yara/libyara/include/yara/hex_lexer.h
+include yara/libyara/include/yara/mem.h
+include yara/libyara/include/yara/pe.h
+include yara/libyara/include/yara/pe_utils.h
+include yara/libyara/include/yara/re_lexer.h
+include yara/libyara/re_grammar.h
+
+include yara/libyara/modules/module_list
+
+include LICENSE
+include README.md

@@ -18,10 +18,38 @@ from distutils.command import build
 from distutils.command import build_ext
 import setuptools
 
-_yara_procdump = setuptools.Extension('yara_procdump',
-                                      sources=['yara_procdump_python.c'],
-                                      include_dirs=['yara/libyara',
-                                                    'yara/libyara/include'])
+
+# These also go into MANIFEST.in.
+yara_sources = [
+    'yara/libyara/arena.c',
+    'yara/libyara/hash.c',
+    'yara/libyara/hex_grammar.c',
+    'yara/libyara/hex_lexer.c',
+    'yara/libyara/libyara.c',
+    'yara/libyara/mem.c',
+    'yara/libyara/modules.c',
+    'yara/libyara/object.c',
+    'yara/libyara/proc.c',
+    'yara/libyara/re.c',
+    'yara/libyara/re_grammar.c',
+    'yara/libyara/re_lexer.c',
+    'yara/libyara/sizedstr.c',
+    'yara/libyara/stream.c',
+    'yara/libyara/strutils.c',
+    'yara/libyara/threading.c',
+    'yara/libyara/modules/elf.c',
+    'yara/libyara/modules/math.c',
+    'yara/libyara/modules/pe.c',
+    'yara/libyara/modules/pe_utils.c',
+    'yara/libyara/modules/time.c',
+    'yara/libyara/modules/tests.c',
+]
+
+_yara_procdump = setuptools.Extension(
+    'yara_procdump',
+    sources=['yara_procdump_python.c'],
+    include_dirs=['yara/libyara',
+                  'yara/libyara/include'])
 
 OPTIONS = [
     ('dynamic-linking', None, 'link dynamically against libyara'),
@@ -77,35 +105,15 @@ class BuildExtCommand(build_ext.build_ext):
     if self.dynamic_linking:
       module.libraries.append('yara')
     else:
-      module.sources.append('yara/libyara/arena.c')
-      module.sources.append('yara/libyara/hash.c')
-      module.sources.append('yara/libyara/hex_grammar.c')
-      module.sources.append('yara/libyara/hex_lexer.c')
-      module.sources.append('yara/libyara/libyara.c')
-      module.sources.append('yara/libyara/mem.c')
-      module.sources.append('yara/libyara/modules.c')
-      module.sources.append('yara/libyara/object.c')
-      module.sources.append('yara/libyara/proc.c')
-      module.sources.append('yara/libyara/re.c')
-      module.sources.append('yara/libyara/re_grammar.c')
-      module.sources.append('yara/libyara/re_lexer.c')
-      module.sources.append('yara/libyara/sizedstr.c')
-      module.sources.append('yara/libyara/stream.c')
-      module.sources.append('yara/libyara/strutils.c')
-      module.sources.append('yara/libyara/threading.c')
-      module.sources.append('yara/libyara/modules/elf.c')
-      module.sources.append('yara/libyara/modules/math.c')
-      module.sources.append('yara/libyara/modules/pe.c')
-      module.sources.append('yara/libyara/modules/pe_utils.c')
-      module.sources.append('yara/libyara/modules/time.c')
-      module.sources.append('yara/libyara/modules/tests.c')
+      for source in yara_sources:
+        module.sources.append(source)
 
     build_ext.build_ext.run(self)
 
 
 setuptools.setup(
     name='yara-procdump-python',
-    version='0.1.0.post2',
+    version='0.1.0.post4',
     description=description,
     long_description=long_description,
     license='Apache 2.0',
@@ -116,4 +124,5 @@ setuptools.setup(
         'build': BuildCommand,
         'build_ext': BuildExtCommand,
     },
-    ext_modules=[_yara_procdump])
+    ext_modules=[_yara_procdump],
+)
