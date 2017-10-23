@@ -11,13 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Setup.py for yara-procdump-python."""
 
 from distutils.command import build
 from distutils.command import build_ext
 import setuptools
-
 
 # These also go into MANIFEST.in.
 yara_sources = [
@@ -48,8 +46,7 @@ yara_sources = [
 _yara_procdump = setuptools.Extension(
     'yara_procdump',
     sources=['yara_procdump_python.c'],
-    include_dirs=['yara/libyara',
-                  'yara/libyara/include'])
+    include_dirs=['yara/libyara', 'yara/libyara/include'])
 
 OPTIONS = [
     ('dynamic-linking', None, 'link dynamically against libyara'),
@@ -89,8 +86,7 @@ class BuildExtCommand(build_ext.build_ext):
 
   def finalize_options(self):
     build_ext.build_ext.finalize_options(self)
-    self.set_undefined_options('build',
-                               ('dynamic_linking', 'dynamic_linking'))
+    self.set_undefined_options('build', ('dynamic_linking', 'dynamic_linking'))
 
   def run(self):
     """Execute the build command."""
