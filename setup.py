@@ -20,6 +20,7 @@ import setuptools
 # These also go into MANIFEST.in.
 yara_sources = [
     'yara/libyara/arena.c',
+    'yara/libyara/endian.c',
     'yara/libyara/hash.c',
     'yara/libyara/hex_grammar.c',
     'yara/libyara/hex_lexer.c',
@@ -109,7 +110,7 @@ class BuildExtCommand(build_ext.build_ext):
 
 setuptools.setup(
     name='yara-procdump-python',
-    version='0.1.0.post4',
+    version='0.1.0.post5',
     description=description,
     long_description=long_description,
     license='Apache 2.0',

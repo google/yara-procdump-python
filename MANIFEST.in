@@ -1,4 +1,5 @@
 include yara/libyara/arena.c
+include yara/libyara/endian.c
 include yara/libyara/hash.c
 include yara/libyara/hex_grammar.c
 include yara/libyara/hex_lexer.c
