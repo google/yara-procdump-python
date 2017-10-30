@@ -193,7 +193,7 @@ static void ProcessMemoryIterator_dealloc(
 typedef struct
 {
   PyObject_HEAD
-  uint8_t* raw_data;
+  unsigned char* raw_data;
   size_t size;
   size_t base;
 } MemoryBlock;
@@ -332,6 +332,8 @@ static PyObject* ProcessMemoryIterator_next(
 {
   ProcessMemoryIterator* it = (ProcessMemoryIterator*) self;
   int err;
+  unsigned char* data_ptr;
+  MemoryBlock* memory_block;
 
   // This indicates that the iterator has been used up.
   if (it->block_iterator == NULL)
@@ -340,40 +342,34 @@ static PyObject* ProcessMemoryIterator_next(
     return NULL;
   }
 
-  // During the first invocation, we need to use get_first_memory_block.
-  if (it->block == NULL)
-    it->block = yr_process_get_first_memory_block(it->block_iterator);
-  else
-    it->block = yr_process_get_next_memory_block(it->block_iterator);
+  while (1) {
+    // During the first invocation, we need to use get_first_memory_block.
+    if (it->block == NULL)
+      it->block = yr_process_get_first_memory_block(it->block_iterator);
+    else
+      it->block = yr_process_get_next_memory_block(it->block_iterator);
 
-  if (it->block == NULL)
-  {
-    PyErr_SetNone(PyExc_StopIteration);
-    return NULL;
-  }
+    if (it->block == NULL)
+      {
+	err = yr_process_close_iterator(it->block_iterator);
+	PyMem_Free(it->block_iterator);
+	it->block_iterator = NULL;
+	if (err != 0) {
+	  return handle_error(err, NULL);
+	}
+	PyErr_SetNone(PyExc_StopIteration);
+	return NULL;
+      }
 
-  uint8_t* data_ptr = yr_process_fetch_memory_block_data(it->block);
-  if (data_ptr == NULL)
-  {
-    // This is how we are notified that the process is done.
-    it->block = NULL;
-    err = yr_process_close_iterator(it->block_iterator);
-    PyMem_Free(it->block_iterator);
-    it->block_iterator = NULL;
-    if (err != 0)
-    {
-      return handle_error(err, NULL);
+    data_ptr = yr_process_fetch_memory_block_data(it->block);
+    if (data_ptr) {
+      memory_block = (MemoryBlock *) MemoryBlock_NEW();
+      memory_block->size = it->block->size;
+      memory_block->base = it->block->base;
+      memory_block->raw_data = data_ptr;
+      return (PyObject *) memory_block;
     }
-
-    PyErr_SetNone(PyExc_StopIteration);
-    return NULL;
   }
-
-  MemoryBlock *memory_block = (MemoryBlock *) MemoryBlock_NEW();
-  memory_block->size = it->block->size;
-  memory_block->base = it->block->base;
-  memory_block->raw_data = data_ptr;
-  return (PyObject *) memory_block;
 }
 
 static PyObject* yara_process_memory_iterator(
@@ -415,13 +411,7 @@ static PyObject* yara_process_memory_iterator(
     return handle_error(err, NULL);
   }
 
-  result->block = yr_process_get_first_memory_block(result->block_iterator);
-  if (result->block == NULL)
-  {
-    PyMem_Free(result->block_iterator);
-    result->block_iterator = NULL;
-    return PyErr_NoMemory();
-  }
+  result->block = NULL;
   return (PyObject *) result;
 }
 
