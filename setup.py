@@ -110,7 +110,7 @@ class BuildExtCommand(build_ext.build_ext):
 
 setuptools.setup(
     name='yara-procdump-python',
-    version='0.1.0.post6',
+    version='0.1.0.post7',
     description=description,
     long_description=long_description,
     license='Apache 2.0',
