@@ -193,7 +193,7 @@ static void ProcessMemoryIterator_dealloc(
 typedef struct
 {
   PyObject_HEAD
-  unsigned char* raw_data;
+  const unsigned char* raw_data;
   size_t size;
   size_t base;
 } MemoryBlock;
@@ -244,7 +244,7 @@ static int MemoryBlock_getbuffer(
     int flags)
 {
   MemoryBlock* self = (MemoryBlock*) obj;
-  return PyBuffer_FillInfo(view, obj, self->raw_data, self->size, 1, flags);
+  return PyBuffer_FillInfo(view, obj, (void *) self->raw_data, self->size, 1, flags);
 }
 
 static PyBufferProcs MemoryBlock_as_buffer = {
@@ -332,7 +332,7 @@ static PyObject* ProcessMemoryIterator_next(
 {
   ProcessMemoryIterator* it = (ProcessMemoryIterator*) self;
   int err;
-  unsigned char* data_ptr;
+  const unsigned char* data_ptr;
   MemoryBlock* memory_block;
 
   // This indicates that the iterator has been used up.
